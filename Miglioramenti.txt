@@ -1,1 +1,12 @@
-Con calma scrivo
+1)Facoltativo: 1.1)Visualizzazione ANNUNCIO per DATAPUBB (dovrebbe essere automatico)
+                                     per categorie (non come le intende Milazzo)
+                                     per PREZZO (non valido per AstaRialzo)
+               1.2)Main: S/s R/r 
+             
+2)Eccezioni: 2.1)AsteRialzo: la data di scadenza deve essere successiva a quella di pubblicazione
+             2.2)Formato data scadenza (mettiamo tutti i formati o facciamo un solo formato)
+             2.3)Giorni non validi (es. 32/13/2020-->01/02/2021)
+             2.4)PREZZO (sia AsteRialzo sia AcquistoDiretto): virgola vs punto
+           
+Problema: MagiaSpazi
+            
