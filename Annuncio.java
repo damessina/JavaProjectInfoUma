@@ -1,3 +1,4 @@
+package annunci;
 import java.util.*;
 
 public class Annuncio {
@@ -19,10 +20,4 @@ public class Annuncio {
 	public Date getdata() {
 		return now;
 	}
-	//overriding del metodo toString per facilitare la visualizzazione degli oggetti
-	public String toString() {
-		return descrizione + " "+ now;
-	}
-	
-
 }
