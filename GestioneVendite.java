@@ -1,3 +1,4 @@
+import annunci.*;
 import java.util.*;
 import java.text.*;
 
@@ -98,29 +99,10 @@ public class GestioneVendite {
 			}
 			}while(flag);
 		}
-		
 	public void visualizza() {
 		for (Annuncio x : v) {
 		System.out.println(x);
+		System.out.printl();
 		}
 	}
-	
-		
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
