@@ -5,8 +5,8 @@ public class Annuncio {
 	
 	// usando la classe Date di java.util quando creiamo l'oggetto Annuncio
 	// la data si imposta automaticamente sulla data di creazione dell'oggetto
-	private Date now =new Date();
-	private String descrizione;
+	protected Date now =new Date();
+	protected String descrizione;
 	
 	public Annuncio(String descrizione, Date now) {
 		this.descrizione=descrizione;
