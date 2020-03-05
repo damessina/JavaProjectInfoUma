@@ -11,7 +11,9 @@ public class Mainprova {
 		char scelta= input.next().charAt(0);
 		if (scelta=='S') {
 			Date now =new Date();
-			ciccio.aggiungiannuncio("orologio", now);
+			System.out.println("Aggiungi una breve descrizione del prodotto: ");
+			String desc=input.nextLine();
+			ciccio.aggiungiannuncio(desc, now);
 			ciccio.visualizza();
 			System.out.println("Hai creato un nuovo annuncio");
 		}
