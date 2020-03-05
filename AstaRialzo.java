@@ -1,3 +1,4 @@
+package annunci;
 import java.util.*;
 public class AstaRialzo extends Annuncio{
 
@@ -14,8 +15,8 @@ public class AstaRialzo extends Annuncio{
 		this.prezzoiniziale=prezzoiniziale;
 	}
 	
-	// impostiamo un altro costruttore perché al momento della creazione dell'oggetto AstaRialzo
-	// il valore di importoultimaofferta è necessariamente 0
+	// impostiamo un altro costruttore perchÃ© al momento della creazione dell'oggetto AstaRialzo
+	// il valore di importoultimaofferta Ã¨ necessariamente 0
 	// per reimpostare il suo valore si utilizza l'apposito metodo setter
 	public AstaRialzo(String descrizione, Date now, double prezzoiniziale, Date datascadenza, String ultimoofferente) {
 		super (descrizione, now);
@@ -40,6 +41,10 @@ public class AstaRialzo extends Annuncio{
 	}
 	public void setimportoultimaofferta(double nuovaofferta) {
 		importoultimaofferta=nuovaofferta;
+	}
+	//overriding del metodo toString()
+	public String toString() {
+		return "Categoria: Asta al rialzo " + "Prodotto: " + descrizione + "Data di scadenza: "+ datascadenza ;
 	}
 
 }
