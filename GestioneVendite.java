@@ -27,7 +27,7 @@ public class GestioneVendite {
 				double prezzoiniziale=0.0;
 				//gestisco l'eccezione dell'inserimento di un prezzo decimale
 				
-				//
+				//qua ho problemi con il ciclo che mi ripete in continuazione la stampa
 				do {
 				try {
 					
@@ -40,7 +40,7 @@ public class GestioneVendite {
 				}catch (InputMismatchException e) {
 					System.out.println("Formato non valido.");
 					System.out.println("Inserisci un nuovo prezzo.");
-					System.out.println("Usare la virgola per dividere le unit‡ dai decimali");	
+					System.out.println("Usare la virgola per dividere le unit√† dai decimali");	
 				}
 				}while (control);
 				
@@ -62,7 +62,7 @@ public class GestioneVendite {
 					SimpleDateFormat newformat = new SimpleDateFormat ("dd-MM-yyyy"); 
 					String datascadenza=input.nextLine();
 					datagiusta=newformat.parse(datascadenza);
-					System.out.println("la data inserita Ë: " + datagiusta);
+					System.out.println("la data inserita √®: " + datagiusta);
 					controllo=false;
 					
 				}catch (ParseException e) {
@@ -92,7 +92,7 @@ public class GestioneVendite {
 				System.out.println("Hai creato un nuovo annuncio");
 			}
 			else {
-				//si Ë deciso in estendere la classe eccezione per migliorare la lettura del codice
+				//si √® deciso in estendere la classe eccezione per migliorare la lettura del codice
 				throw new EccezioneDigitazione("Errore nell'inserimento");
 			}
 			}catch (EccezioneDigitazione e) {
