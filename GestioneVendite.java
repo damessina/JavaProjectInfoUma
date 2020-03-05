@@ -4,7 +4,7 @@ import java.text.*;
 public class GestioneVendite {
 	
 		Scanner input = new Scanner (System.in);
-		private Vector <Annuncio> v  = new Vector();
+		private Vector <Annuncio> v  = new Vector <Annuncio>();
 		
 		public GestioneVendite (Vector <Annuncio> v) {
 			this.v=v;
