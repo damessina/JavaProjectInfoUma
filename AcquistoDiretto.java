@@ -1,3 +1,5 @@
+package annunci;
+
 import java.util.*;
 
 public class AcquistoDiretto extends Annuncio{
@@ -17,6 +19,10 @@ public class AcquistoDiretto extends Annuncio{
 	}
 	public int gettempiconsegna() {
 		return tempiconsegna;
+	}
+	//overriding dei metodi toString per una visualizzazione adeguata
+	public String toString() {
+		return "Categoria: Asta al rialzo " + "Prodotto: " + descrizione+ ". Prezzo: "+ prezzo + ". Per la consegna servono: " + tempiconsegna + " giorni.";
 	}
 
 }
