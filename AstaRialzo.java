@@ -44,7 +44,7 @@ public class AstaRialzo extends Annuncio{
 	}
 	//overriding del metodo toString()
 	public String toString() {
-		return "Categoria: Asta al rialzo " + "Prodotto: " + descrizione + "Data di scadenza: "+ datascadenza ;
+		return "Categoria: Asta al rialzo. " + "Prodotto: " + descrizione + ". Data di scadenza: "+ datascadenza ;
 	}
 
 }
