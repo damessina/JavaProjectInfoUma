@@ -22,7 +22,7 @@ public class AcquistoDiretto extends Annuncio{
 	}
 	//overriding dei metodi toString per una visualizzazione adeguata
 	public String toString() {
-		return "Categoria: acquisto diretto. " + "Prodotto: " + descrizione+ ". Prezzo: "+ prezzo + ". Per la consegna servono: " + tempiconsegna + " giorni.";
+		return "Categoria: acquisto diretto. " + ". Prodotto: " + descrizione+ ". Prezzo: "+ prezzo + ". Per la consegna servono: " + tempiconsegna + " giorni.";
 	}
 
 }
