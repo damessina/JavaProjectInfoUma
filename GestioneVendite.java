@@ -1,6 +1,4 @@
 import annunci.*;
-import java.util.*;
-import java.text.*;
 
 public class GestioneVendite {
 	
@@ -45,6 +43,10 @@ public class GestioneVendite {
 				}
 				}while (control);
 				
+				// mi serve per mangiarmi lo spazio successivo
+				//altrimenti input.nextLine() successivo mi mangia lo spazio e viene skippato
+				input.nextLine();
+				
 				//in questo punto sto gestendo l'inserimento della data
 				//con SimpleDateFormat sto impostando il nuovo formato possibile di data da inserire
 				//imposto una booleana per fare in modo che se ci sia l'eccezione
@@ -77,7 +79,7 @@ public class GestioneVendite {
 					nuovoannuncio= new AstaRialzo(descrizione, now, prezzoiniziale, datagiusta, ultimoofferente);
 					// bisogna aggiungere l'oggetto al vettore
 					v.add(nuovoannuncio);
-					System.out.println("Hai creato un nuovo annuncio");
+					System.out.println("Hai creato un nuovo annuncio!");
 				}
 			else if (scelta=='D') {
 				
@@ -105,7 +107,23 @@ public class GestioneVendite {
 	public void visualizza() {
 		for (Annuncio x : v) {
 		System.out.println(x);
-		System.out.println();
+		System.out.println("");
+		}
+	}
+	public void visualizzaAste() {
+		for (Annuncio x:v) {
+			if(x instanceof AstaRialzo) {
+				System.out.println(x);
+				System.out.println("");
+			}
+		}
+	}
+	public void visualizzaDiretti() {
+		for (Annuncio x:v) {
+			if (x instanceof AcquistoDiretto) {
+				System.out.println(x);
+				System.out.println("");
+			}
 		}
 	}
 }
