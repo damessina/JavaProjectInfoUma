@@ -74,8 +74,6 @@ public class GestioneVendite {
 					
 					System.out.println("Inserisci il nome dell'ultimo offerente");
 					String ultimoofferente= input.nextLine();
-					input.nextLine();
-					
 					nuovoannuncio= new AstaRialzo(descrizione, now, prezzoiniziale, datagiusta, ultimoofferente);
 					// bisogna aggiungere l'oggetto al vettore
 					v.add(nuovoannuncio);
