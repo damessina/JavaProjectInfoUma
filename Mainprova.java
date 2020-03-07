@@ -26,10 +26,10 @@ public class Mainprova {
 			case 'T': ciccio.visualizza(); break;
 			case 'A': ciccio.visualizzaAste(); break;
 			case 'D': ciccio.visualizzaDiretti(); break;
-			case 'F': controllo=false;
+			case 'F': controllo=false; break;
 			default : System.out.println("Errore nell'inserimento");
 		}
 		}while (controllo);
-		System.out.println("Grazie, arrivederci");
+		System.out.println("Grazie e Arrivederci.");
 	}
 }
