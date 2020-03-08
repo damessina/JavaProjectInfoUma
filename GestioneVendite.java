@@ -1,4 +1,5 @@
 import annunci.*;
+import eccezioni.*;
 import java.util.*;
 import java.text.*;
 
@@ -14,29 +15,25 @@ public class GestioneVendite {
 	public void aggiungiannuncio(String descrizione, Date now){
 		Annuncio nuovoannuncio = new Annuncio (descrizione, now);
 		boolean flag=true;
+		do {
+			try {
+				System.out.println("Vuoi aggiungere un'asta al rialzo [R] o un acquisto diretto?[D]");
+				char scelta=input.next().charAt(0);
 		
-	do {
-		try {
-		System.out.println("Vuoi aggiungere un'asta al rialzo [R] o un acquisto diretto?[D]");
-		char scelta=input.next().charAt(0);
-		
-		if (scelta=='R') {
+				if (scelta=='R') {
 			
-			flag=false;
+					flag=false;
 			
-			boolean control=true;
-			double prezzoiniziale=0.0;
+					boolean control=true;
+					double prezzoiniziale=0.0;
 			//gestisco l'eccezione dell'inserimento di un prezzo decimale
 			
 			do {
-			try {
-				
-				System.out.println("Inserisci in prezzo iniziale:");
-				prezzoiniziale=input.nextDouble();
-				//input.nextLine();
-				control=false;
-			
-			
+				try {
+					System.out.println("Inserisci in prezzo iniziale:");
+					prezzoiniziale=input.nextDouble();
+					//input.nextLine();
+					control=false;
 			}catch (InputMismatchException e) {
 				input.next();
 				System.out.println("Formato non valido.");
@@ -55,23 +52,24 @@ public class GestioneVendite {
 			//il programma continui a chiedere una data valida e non si interrompa
 			
 			boolean controllo=true;
+			// imposto la variabile d'istanza a null, perché dopo verrà modificata dal blocco sottostante
+			// devo dargli un valore, altrimenti il compilatore mi dà errore
 			Date datagiusta=null;
+			
 			do {
 				try {
 					System.out.println("Inserisci una data di scadenza in formato dd-MM-yyyy: ");
-					SimpleDateFormat newformat = new SimpleDateFormat ("dd-MM-yyyy"); 
+					SimpleDateFormat newformat = new SimpleDateFormat ("dd-MM-yyyy");
 					String datascadenza=input.next();
 					datagiusta=newformat.parse(datascadenza);
-					boolean before = now.before(datagiusta);
-					if (before) {
-						System.out.println("la data inserita è: " + datagiusta);
-						controllo=false;
-					}else {
-						System.out.println("La data di scadenza deve essere superiore a quella attuale");
+					if  (now.after(datagiusta)) throw new EccezioneData("Data invalida: La data di scadenza deve essere posteriore a quella attuale");
+					else controllo=false;
+					} catch (EccezioneData e) {
+						System.out.println(e.getMessage());
+						System.out.println("Inserire nuovamente la data");
+					} catch (ParseException e) {
+						System.out.println("impossibile ricavare una data valida dal formato inserito");
 					}
-				}catch (ParseException e) {
-					System.out.println("impossibile ricavare una data valida dal formato inserito");
-				}
 				}while (controllo);
 				
 				System.out.println("Inserisci il nome dell'ultimo offerente");
@@ -82,7 +80,8 @@ public class GestioneVendite {
 				v.add(nuovoannuncio);
 				System.out.println("Hai creato un nuovo annuncio!");
 				System.out.println("");
-			}
+				}
+				//gestisco la scelta dell'utente di inserire un annuncio di AcquistoDiretto
 		else if (scelta=='D') {
 			
 			flag=false;
@@ -107,26 +106,48 @@ public class GestioneVendite {
 		}
 		}while(flag);
 	}
-public void visualizza() {
-	for (Annuncio x : v) {
-	System.out.println(x);
-	System.out.println("");
+	public void visualizza() {
+		for (Annuncio x : v) {
+			System.out.println(x);
+			System.out.println("");
 	}
 }
-public void visualizzaAste() {
-	for (Annuncio x:v) {
+	public void visualizzaAste() {
+		for (Annuncio x:v) {
 		if(x instanceof AstaRialzo) {
 			System.out.println(x);
 			System.out.println("");
 		}
 	}
 }
-public void visualizzaDiretti() {
-	for (Annuncio x:v) {
+	public void visualizzaDiretti() {
+		for (Annuncio x:v) {
 		if (x instanceof AcquistoDiretto) {
 			System.out.println(x);
 			System.out.println("");
 		}
 	}
     }
-}
+	public void visualizzaAfter() {
+		boolean controllo=true;
+		Date datagiusta = null;
+		do {
+			try {
+			System.out.println("Inserisci una data di scadenza in formato dd-MM-yyyy: ");
+			SimpleDateFormat newformat = new SimpleDateFormat ("dd-MM-yyyy");
+			String datascadenza=input.next();
+			datagiusta=newformat.parse(datascadenza);
+			controllo=false;
+			}
+			catch (ParseException e) {
+				System.out.println("impossibile ricavare una data valida dal formato inserito");
+			}
+		}while (controllo);
+	for (Annuncio x:v) {
+		if (x.getdata().after(datagiusta)) {
+			System.out.println(x);
+			System.out.println("");
+		}
+	}
+	}
+	}
