@@ -17,9 +17,9 @@ public class MainProva {
 		System.out.println("4- Visualizza solo gli acquisti diretti.");
 		System.out.println("5- Visualizza gli annunci successivi ad una certa data.");
 		System.out.println("6- Visualizza le aste scadute. ");
-		System.out.println("7- Termina le operazioni.");
+		System.out.println("7- Rimuovi annuncio di asta al rialzo scaduta. ");
+		System.out.println("8- Termina le operazioni.");
 		System.out.println("");
-		
 		int scelta= input.nextInt();
 		input.nextLine();
 		switch (scelta) {
@@ -41,7 +41,9 @@ public class MainProva {
 					ciccio.visualizzaAfter(); break;
 			case 6: System.out.println("- Visualizza le aste scadute -");
 					ciccio.visualizzascadute(); break;
-			case 7: System.out.println("- Termina le operazioni -");
+			case 7: System.out.println("- Rimuovi annuncio di asta al rialzo scaduta -");
+					ciccio.rimuoviannuncio(); break;
+			case 8: System.out.println("- Termina le operazioni -");
 					controllo=false; break;
 			default : System.out.println("Errore nell'inserimento");
 		}
