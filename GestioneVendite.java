@@ -162,14 +162,47 @@ public class GestioneVendite {
 		}
 	}
 	public void rimuoviannuncio() {
-		for (Annuncio x:v) {
-			if (x instanceof AstaRialzo) {
-				if (((AstaRialzo) x).getdatascadenza().before(now)) {
-					System.out.println(x);
+		//creo un array della stessa dimensione del vettore
+		//l'array mi serve per storare gli indici di posizione delle aste scadute
+		//seguendo un indice sequenziale, utile alla loro eliminazione
+		int[] posizioni = new int [v.size()];
+		int contatore=0;
+		System.out.println("Queste sono le aste scadute:");
+		System.out.println("");
+		for (int i=0; i<v.size();i++) {
+			if (v.get(i) instanceof AstaRialzo) {
+				if (((AstaRialzo) v.get(i)).getdatascadenza().before(now)) {
+					System.out.print(contatore + "- ");
+					System.out.println(v.get(i));
 					System.out.println("");
-					//... continua...
+					// creo un array che come indice ha un contatore che avanza man mano che trova delle aste scadute
+					// l'array memorizza, ogni volta che trova un'asta scaduta, la posizione che la relativa asta aveva sul vettore
+					// in questo modo ho un array che ordina sequenzialmente le posizioni delle aste scadute sul vettore
+					posizioni[contatore]=i;
+					contatore++;
 				}
 			}
 		}
-	}
+		System.out.println("Quale annuncio vuoi eliminare?");
+		boolean bandierina=true;
+		do {
+			try {
+		int elenco=input.nextInt();
+		// se il numero inserito è maggiore del contatore (cioè dell'indice dell'ultimo elemento inserito nell'array), getto l'eccezione
+		if(elenco>contatore) throw new ErroreIndice("Errore nella digitazione dell'indice");
+		else {
+			// rimuovo l'annuncio nella posizione "elenco" dell'array
+			v.remove(posizioni[elenco]);
+			bandierina=false;
+			// stampo il nome dell'ultimo offerente
+			System.out.print("Il nome dell'ultimo offerente è: ");
+			System.out.println(((AstaRialzo) v.get(posizioni[elenco])).getultimoorente());
+		}
+			}catch (ErroreIndice e) {
+				input.next();
+				System.out.print(e.getMessage());
+				System.out.println("Digita il numero dell'annuncio che vuoi eliminare: ");
+			}
+		}while(bandierina);	
+		}
 	}
