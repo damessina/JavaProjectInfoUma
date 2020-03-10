@@ -7,6 +7,7 @@ public class GestioneVendite {
 	
 	Scanner input = new Scanner (System.in);
 	private Vector <Annuncio> v  = new Vector <Annuncio>();
+	private Date now = new Date();
 	
 	public GestioneVendite (Vector <Annuncio> v) {
 		this.v=v;
@@ -149,5 +150,26 @@ public class GestioneVendite {
 			System.out.println("");
 		}
 	}
+	}
+	public void visualizzascadute() {
+		for (Annuncio x:v) {
+			if (x instanceof AstaRialzo) {
+				if (((AstaRialzo) x).getdatascadenza().before(now)) {
+					System.out.println(x);
+					System.out.println("");
+				}
+			}
+		}
+	}
+	public void rimuoviannuncio() {
+		for (Annuncio x:v) {
+			if (x instanceof AstaRialzo) {
+				if (((AstaRialzo) x).getdatascadenza().before(now)) {
+					System.out.println(x);
+					System.out.println("");
+					//... continua...
+				}
+			}
+		}
 	}
 	}
