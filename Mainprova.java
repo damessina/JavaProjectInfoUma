@@ -1,13 +1,17 @@
-import annunci.*;
 import java.util.*;
 
-public class MainProva {
+public class Mainprova {
 
 	public static void main(String[] args) {
 		Scanner input= new Scanner (System.in);
-		Vector <Annuncio> v = new Vector();
-		GestioneVendite ciccio= new GestioneVendite(v);
 		boolean controllo= true;
+		
+		System.out.println("Benvenuto/a in AsteOnline!");
+		String AnnuncioFile = "Annuncio";
+		
+		// crea un registro usando il file indicato dall'utente
+		GestioneVendite ciccio = new GestioneVendite(AnnuncioFile);
+
 		do {
 		System.out.println("Operazioni disponibili: ");
 		System.out.println("");
@@ -37,18 +41,36 @@ public class MainProva {
 					ciccio.visualizzaAste(); break;
 			case 4: System.out.println("- Visualizza solo gli acquisti diretti -");
 					ciccio.visualizzaDiretti(); break;
-			case 5: System.out.println("- Visualizza solo gli acquisti diretti -");
+			case 5: System.out.println("- Visualizza gli annunci successivi ad una certa data -");
 					ciccio.visualizzaAfter(); break;
 			case 6: System.out.println("- Visualizza le aste scadute -");
 					ciccio.visualizzascadute(); break;
 			case 7: System.out.println("- Rimuovi annuncio di asta al rialzo scaduta -");
 					ciccio.rimuoviannuncio(); break;
 			case 8: System.out.println("- Termina le operazioni -");
-					controllo=false; break;
+					controllo=false; 
+					if (ciccio.daSalvare()) {
+						char risposta;
+						do {
+							System.out.println("Vuoi salvare le modifiche effettuate (S/N)?");
+							risposta = input.next().charAt(0);
+							input.nextLine();
+							if (risposta=='S') { 
+								boolean tuttoOk = ciccio.salva();
+								if (tuttoOk) 
+									System.out.println("Dati Salvati");
+								else
+									System.out.println("Problema durante il salvataggio");
+								}
+
+						} while (risposta!='S' && risposta!='N');
+					}
+					break;
 			default : System.out.println("Errore nell'inserimento");
 		}
 		}while (controllo);
 		System.out.println("Grazie e Arrivederci.");
+		System.out.println("Riusciremo a finirlo? #SOFUSA");
 	}
 
 }
