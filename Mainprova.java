@@ -1,6 +1,7 @@
 import java.util.*;
 
-public class Mainprova {
+//MainProva è con la P maiuscola nel mio
+public class MainProva {
 
 	public static void main(String[] args) {
 		Scanner input= new Scanner (System.in);
