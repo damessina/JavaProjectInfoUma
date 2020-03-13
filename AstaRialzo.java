@@ -1,6 +1,10 @@
 package annunci;
 import java.util.*;
+
 public class AstaRialzo extends Annuncio{
+	
+	// variabile statica richiesta da Serializable
+	static final long serialVersionUID = 1;
 
 	private double prezzoiniziale;
 	private Date datascadenza;
