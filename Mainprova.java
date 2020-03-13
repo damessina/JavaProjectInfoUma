@@ -1,6 +1,5 @@
 import java.util.*;
 
-//MainProva è con la P maiuscola nel mio
 public class MainProva {
 
 	public static void main(String[] args) {
@@ -22,7 +21,8 @@ public class MainProva {
 		System.out.println("5- Visualizza gli annunci successivi ad una certa data.");
 		System.out.println("6- Visualizza le aste scadute. ");
 		System.out.println("7- Rimuovi annuncio di asta al rialzo scaduta. ");
-		System.out.println("8- Termina le operazioni.");
+		System.out.println("8- Fai una nuova offerta per l'asta al rialzo. ");
+		System.out.println("9- Termina le operazioni.");
 		System.out.println("");
 		int scelta= input.nextInt();
 		input.nextLine();
@@ -47,7 +47,9 @@ public class MainProva {
 					ciccio.visualizzascadute(); break;
 			case 7: System.out.println("- Rimuovi annuncio di asta al rialzo scaduta -");
 					ciccio.rimuoviannuncio(); break;
-			case 8: System.out.println("- Termina le operazioni -"); //qua forse conviene fare un metodo in GestioneVendite
+			case 8: System.out.println("- Fai una nuova offerta per un'asta al rialzo -");
+					ciccio.nuovaofferta(); break;
+			case 9: System.out.println("- Termina le operazioni -"); //qua forse conviene fare un metodo in GestioneVendite
 					controllo=false; 
 					if (ciccio.daSalvare()) {
 						char risposta;
@@ -70,7 +72,6 @@ public class MainProva {
 		}
 		}while (controllo);
 		System.out.println("Grazie e Arrivederci.");
-		System.out.println("Riusciremo a finirlo? #SOFUSA");
 	}
 
 }
