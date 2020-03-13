@@ -1,7 +1,11 @@
 package annunci;
+import java.io.Serializable;
 import java.util.*;
 
-public class Annuncio {
+public class Annuncio implements Serializable {
+	
+	// variabile statica richiesta da Serializable
+	static final long serialVersionUID = 1;
 	
 	// usando la classe Date di java.util quando creiamo l'oggetto Annuncio
 	// la data si imposta automaticamente sulla data di creazione dell'oggetto
