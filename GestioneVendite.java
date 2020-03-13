@@ -1,5 +1,5 @@
 import annunci.*;
-import Eccezioni.*;
+import eccezioni.*;
 import java.util.*;
 import java.text.*;
 import java.io.*;
@@ -15,7 +15,7 @@ public class GestioneVendite {
 	
 	public GestioneVendite () {
 		try {
-		ObjectInputStream file_input = new ObjectInputStream(new BufferedInputStream(new FileInputStream("Annuncio")));
+		ObjectInputStream file_input = new ObjectInputStream(new BufferedInputStream(new FileInputStream("Annuncio.dat")));
 		// legge l'intero vettore da file
 		v = (Vector<Annuncio>) file_input.readObject();
 		file_input.close();
@@ -33,29 +33,24 @@ public class GestioneVendite {
 		System.out.println("ERRORE di I/O");
 		System.out.println(e);
 	}
-}
-	
-	
+}	
 	//metodo per la creazione di un nuovo annuncio
 	public void aggiungiannuncio(String descrizione, Date now){
 		Annuncio nuovoannuncio = new Annuncio (descrizione, now);
 		boolean flag=true;
 		do {
+			System.out.println("Vuoi aggiungere un'asta al rialzo [R] o un acquisto diretto?[D]");
 			try {
-				System.out.println("Vuoi aggiungere un'asta al rialzo [R] o un acquisto diretto?[D]");
 				char scelta=input.next().charAt(0);
-		
 				if (scelta=='R') {
-			
 					flag=false;
-			
 					boolean control=true;
+					//fino a che l'utente non inserisce il prezzo, l'oggetto viene memorizzato con prezz=0.0
 					double prezzoiniziale=0.0;
 			//gestisco l'eccezione dell'inserimento di un prezzo decimale
-			
 			do {
 				try {
-					System.out.println("Inserisci in prezzo iniziale:");
+					System.out.println("Inserisci un prezzo iniziale:");
 					prezzoiniziale=input.nextDouble();
 					//input.nextLine();
 					control=false;
@@ -70,17 +65,15 @@ public class GestioneVendite {
 			// mi serve per mangiarmi lo spazio successivo
 			//altrimenti input.nextLine() successivo mi mangia lo spazio e viene skippato
 			input.nextLine();
-			
-			//in questo punto sto gestendo l'inserimento della data
+	
+			//in questo punto gestisco l'inserimento della data
 			//con SimpleDateFormat sto impostando il nuovo formato possibile di data da inserire
 			//imposto una booleana per fare in modo che se ci sia l'eccezione
 			//il programma continui a chiedere una data valida e non si interrompa
-			
 			boolean controllo=true;
 			// imposto la variabile d'istanza a null, perché dopo verrà modificata dal blocco sottostante
 			// devo dargli un valore, altrimenti il compilatore mi dà errore
 			Date datagiusta=null;
-			
 			do {
 				try {
 					System.out.println("Inserisci una data di scadenza in formato dd-MM-yyyy: ");
@@ -96,12 +89,12 @@ public class GestioneVendite {
 						System.out.println("Impossibile ricavare una data valida dal formato inserito");
 					}
 				}while (controllo);
-				
+			
 				System.out.println("Inserisci il nome dell'ultimo offerente:");
 				String ultimoofferente= input.nextLine();
 				input.nextLine();
 				nuovoannuncio= new AstaRialzo(descrizione, now, prezzoiniziale, datagiusta, ultimoofferente);
-				// bisogna aggiungere l'oggetto al vettore
+				// aggiungo il nuovo oggetto creato al vettore
 				v.add(nuovoannuncio);
 				modifica=true; // modifica non salvata
 				System.out.println("Hai creato un nuovo annuncio!");
@@ -111,7 +104,6 @@ public class GestioneVendite {
 		else if (scelta=='D') {
 			
 			flag=false;
-			
 			//gestisci l'eccezione del prezzo
 			System.out.println("Inserisci un prezzo:");
 			double prezzo=input.nextDouble();
@@ -177,9 +169,6 @@ public class GestioneVendite {
 			System.out.println();
 			}
 	}
-	
-
-	
 	public void visualizzaAfter() {
 		boolean controllo=true;
 		Date datagiusta = null;
@@ -277,21 +266,89 @@ public class GestioneVendite {
 		}else {
 			System.out.println("Non ci sono ascte scadute");
 			System.out.println();
+		}	
 		}
-			
+	public void nuovaofferta() {
+		//faccio la stessa cosa di rimuovi Asta, ma invece di chiedere la rimozione, chiedo di comporre una nuova offerta
+		boolean empty=true;
+		int[] posizioni = new int [v.size()];
+		int contatore=0;
+		System.out.println("Queste sono le aste ancora aperte:");
+		System.out.println("");
+		for (int i=0; i<v.size();i++) {
+			if (v.get(i) instanceof AstaRialzo) {
+				if (((AstaRialzo) v.get(i)).getdatascadenza().after(now)) {
+					System.out.print(contatore + "- ");
+					System.out.println(v.get(i));
+					System.out.println("");
+					empty=false;
+					posizioni[contatore]=i;
+					contatore++;
 		}
-		
+		}
+		}
+		if(!empty) {
+		System.out.println("Per quale asta vuoi fare un'offerta?");
+		boolean bandierina=true;
+		do {
+			try {
+		int elenco=input.nextInt();
+		// se il numero inserito è maggiore del contatore (cioè dell'indice dell'ultimo elemento inserito nell'array), getto l'eccezione
+		if(elenco>contatore) throw new ErroreIndice("Errore nella digitazione dell'indice");
+		else {
+			bandierina=false;
+			System.out.println("Quanto vuoi offrire?");
+			boolean ripetiofferta=true;
+			do {
+			try {
+			double nuovaofferta=input.nextDouble();
+			//se l'offerta fatta è più bassa dell'ultima offerta, getto l'eccezione
+			if (nuovaofferta<=((AstaRialzo) v.get(posizioni[elenco])).getimportoultimaofferta()) throw new EccezioneOfferta("Offerta non valida");
+			//dato che ho già verificato che l'oggetto in questione è istanza di AstaRialzo, posso castare senza incorrere in problemi
+			//imposto la nuova offerta.
+			else {
+			ripetiofferta=false; 
+			((AstaRialzo) v.get(posizioni[elenco])).nuovaofferta(nuovaofferta);
+			System.out.println("Hai fatto una nuova offerta!");
+			System.out.println("");
+			}
+			//gestisco l'eccezione dell'offerta minore dell'ultima offerta
+			}catch(EccezioneOfferta e) {
+				input.next();
+				System.out.println(e.getMessage());
+				System.out.println("Inserisci un importo che sia maggiore dell'ultima offerta.");
+			}
+			catch (InputMismatchException e) {
+				System.out.println("Carattere inserito non valido");
+			}	
+			}while(ripetiofferta);
+			}
+			//gestisco l'eccezione nel caso in cui l'input inserito sia fuori dal range degli indici
+			}catch (ErroreIndice e) {
+				input.next();
+				System.out.print(e.getMessage());
+				System.out.println("Digita il numero dell'asta a cui vuoi fare un'offerta: ");
+			}
+			catch (InputMismatchException e) {
+				input.next();
+				System.out.println("Carattere inserito non valido");
+			}	
+		}while(bandierina);
+		}else {
+			System.out.println("Non ci sono aste scadute");
+			System.out.println();
+		}
+	}
 	// verifica se ci sono modifiche non salvate
 		public boolean daSalvare() {
 			return modifica;
 		}
-		
 		// salva il registro nel file
 		// restituisce true se il salvataggio è andato a buon fine
 		public boolean salva() {
 			if (daSalvare()) { // salva solo se necessario (se ci sono modifiche)
 				try {
-					ObjectOutputStream file_output = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("Annuncio")));
+					ObjectOutputStream file_output = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("Annuncio.dat")));
 					// salva l'intero vettore nel file
 					file_output.writeObject(v);
 					file_output.close();
@@ -304,5 +361,4 @@ public class GestioneVendite {
 				}		
 			} else return true;
 		}
-
 	}
