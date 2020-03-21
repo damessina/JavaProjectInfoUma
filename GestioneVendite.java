@@ -66,64 +66,56 @@ public class GestioneVendite {
 			//altrimenti input.nextLine() successivo mi mangia lo spazio e viene skippato
 			input.nextLine();
 			
-			
-			boolean giusto=true;
-	
 			//in questo punto gestisco l'inserimento della data
 			//con SimpleDateFormat sto impostando il nuovo formato possibile di data da inserire
 			//imposto una booleana per fare in modo che se ci sia l'eccezione
 			//il programma continui a chiedere una data valida e non si interrompa
 			boolean controllo=true;
 			// imposto la variabile d'istanza a null, perch� dopo verr� modificata dal blocco sottostante
-			// devo dargli un valore, altrimenti il compilatore mi d� errore
+			// devo dare un valore data di default per poter creare l'oggetto
+			// successivamente vado a chiedere l'input all'utente e modifico la data
 			Date datagiusta=null;
 			do {
 				try {
 					System.out.println("Inserisci una data di scadenza in formato dd-MM-yyyy: ");
-					SimpleDateFormat newformat = new SimpleDateFormat ("dd-MM-yyyy");
 					String datascadenza=input.next();
 					
-					//metodo per lavorare su anno, mese, giorno
+					//controllo per non lanciare un'eccezione nel caso in cui la data fosse ben formattata
+					//ma per errore dovesse iniziare con uno spazio
+					while (datascadenza.charAt(0)==' ') {
+						datascadenza=datascadenza.substring(1,datascadenza.length());
+					}
+					
+					//metodo per lavorare su anno, mese, giorno separatamente
+					//la stringa dell'utente viene spezzata in tre elementi (giorno, mese e anno)
+					//in questo modo posso chiedere la data all'utente una volta sola, senza spezzare in tre input
+					//allo stesso tempo è possibile fare gli opportuni controlli singolarmente su gioni, mesi e anni
 					String[] arraydata = datascadenza.split("-");
 					int giorno=Integer.parseInt(arraydata[0]);
 					int mese=Integer.parseInt(arraydata[1]);
 					int anno=Integer.parseInt(arraydata[2]);
-					datagiusta=newformat.parse(datascadenza);
-						
+		
+					// controlla la correttezza del numero di giorni del mese (ritorna valore booleano)
+					controllogiorni(giorno, mese, anno);
 					
-					// individua il numero di giorni del mese
-					switch(mese) {
-						 case 4: case 6:case 9:case 11:{
-						if(giorno>30)
-							giusto=false;
-						 break;
+					if((mese < 1 || mese > 12) || !controllogiorni(giorno, mese, anno))
+						throw new EccezioneData("Numero di gioni o mesi non valido!");
+					else {
+						//qui si potrebbe fare un metodo statico
+						SimpleDateFormat newformat = new SimpleDateFormat ("dd-MM-yyyy");
+						datagiusta=newformat.parse(datascadenza);
+						if  (now.after(datagiusta))
+							throw new EccezioneData("Data invalida: La data di scadenza deve essere posteriore a quella attuale");
+						else controllo=false;
 					}
-						 case 2:{
-							 if (anno>1584 && anno % 4 == 0 && anno % 100 != 0 || anno % 400 == 0) {
-								 if(giorno>29)
-										giusto=false;
-							 }else {
-								 if(giorno>28)
-										giusto=false;
-							 }
-							break; 
-						 }
-						 default: {
-							 if(giorno>31)
-								 giusto=false;
-						 break;
-						 }
-					}
-					
-					if  (now.after(datagiusta)) throw new EccezioneData("Data invalida: La data di scadenza deve essere posteriore a quella attuale");
-						else if((mese < 1 || mese > 12) || !giusto) throw new EccezioneData("Coglione hai sbagliato!");
-					else controllo=false;
 
 					} catch (EccezioneData e) {
 						System.out.println(e.getMessage());
 						System.out.println("Inserire nuovamente la data");
-					} catch (ParseException e) {
+					} catch (Exception e) {
+						input.next();
 						System.out.println("Impossibile ricavare una data valida dal formato inserito");
+						System.out.println("Inserisci una data di scadenza in un formato valido (es.: 02-05-2020)");
 					}
 				}while (controllo);
 			
@@ -155,7 +147,6 @@ public class GestioneVendite {
 				System.out.println("Inserisci un nuovo prezzo.");
 				System.out.println("Usare la virgola per dividere le unità dai decimali");
 			}
-				
 			}while(controllo);
 			System.out.println("Inserisci il tempo di consegna (numero di giorni): ");
 			boolean verifica=true;
@@ -243,8 +234,24 @@ public class GestioneVendite {
 		System.out.println("Inserisci una data di scadenza in formato dd-MM-yyyy: ");
 		do {
 			try {
-			SimpleDateFormat newformat = new SimpleDateFormat ("dd-MM-yyyy");
+			
 			String datascadenza=input.next();
+			while (datascadenza.charAt(0)==' ') {
+				datascadenza=datascadenza.substring(1,datascadenza.length());
+			}
+			
+			//metodo per lavorare su anno, mese, giorno
+			//la stringa dell'utente viene spezzata in tre elementi (giorno, mese e anno)
+			String[] arraydata = datascadenza.split("-");
+			int giorno=Integer.parseInt(arraydata[0]);
+			int mese=Integer.parseInt(arraydata[1]);
+			int anno=Integer.parseInt(arraydata[2]);
+			controllogiorni(giorno, mese, anno);
+			if((mese < 1 || mese > 12) || !controllogiorni(giorno, mese, anno)) 
+				throw new EccezioneData("Numero di gioni o mesi non valido!");
+			
+			else {
+			SimpleDateFormat newformat = new SimpleDateFormat ("dd-MM-yyyy");
 			datagiusta=newformat.parse(datascadenza);
 			SimpleDateFormat outputdate= new SimpleDateFormat("EEEE dd MMMM yyyy");
 			SimpleDateFormat outputhour= new SimpleDateFormat("HH:mm");
@@ -252,7 +259,14 @@ public class GestioneVendite {
 			text2=  " alle ore: " + outputhour.format(datagiusta);
 			controllo=false;
 			}
-			catch (ParseException e) {
+			}
+			catch (EccezioneData e) {
+				input.next();
+				System.out.println(e.getMessage());
+				System.out.println("Inserisci una data di scadenza in un formato valido (es.: 02-05-2020)");
+			}
+			catch (Exception e) {
+				input.next();
 				System.out.println("Impossibile ricavare una data valida dal formato inserito");
 				System.out.println("Inserisci una data di scadenza in un formato valido (es.: 02-05-2020)");
 			}
@@ -306,8 +320,10 @@ public class GestioneVendite {
 							System.out.println("");
 							empty=false;
 							// creo un array che come indice ha un contatore che avanza man mano che trova delle aste scadute
-							// l'array memorizza, ogni volta che trova un'asta scaduta, la posizione che la relativa asta aveva sul vettore
-							// in questo modo ho un array che ordina sequenzialmente le posizioni delle aste scadute sul vettore
+							// l'array memorizza, ogni volta che trova un annuncio di Acqu. Diretto, la posizione dello stesso sul vettore
+							// in questo modo ho un array che ordina sequenzialmente e ordinatamente le posizioni delle aste scadute sul vettore
+							//il contatore funge da indice dell'array
+							//Contatore parte da 0 per riempire ordinatamente l'array e si incrementa ad ogni ciclo
 							posizioni[contatore]=i;
 							contatore++;
 					}
@@ -336,6 +352,7 @@ public class GestioneVendite {
 						System.out.println("Digita il numero dell'annuncio che vuoi eliminare: ");
 					}
 					catch (InputMismatchException e) {
+						input.next();
 						System.out.println("Non hai inserito un carattere valido.");
 						System.out.println("Digita il numero dell'annuncio che vuoi eliminare:");
 					}
@@ -499,5 +516,24 @@ public class GestioneVendite {
 					return false;
 				}		
 			} else return true;
+		}
+		
+		// metodo statico che mi ritorna true se i giorni del mese sono stati inseriti correttamente
+		public static boolean controllogiorni(int giorno, int mese, int anno) {
+			
+			boolean giusto=true;
+			switch(mese) {
+			 case 4: case 6:case 9:case 11: if(giorno>30) giusto=false; break;
+			 
+			 case 2: if (anno>1584 && anno % 4 == 0 && anno % 100 != 0 || anno % 400 == 0) {
+					 if(giorno>29) giusto=false;
+			 	}
+				 else {
+					 if(giorno>28) giusto=false;
+				}
+				break;
+			 	default: if(giorno>31) giusto=false; break;
+				}
+			return giusto;
 		}
 	}
