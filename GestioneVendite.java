@@ -33,79 +33,68 @@ public class GestioneVendite {
 		System.out.println("ERRORE di I/O");
 		System.out.println(e);
 	}
-}	
-	//metodo per la creazione di un nuovo annuncio
-	public void aggiungiannuncio(String descrizione, Date now){
-		Annuncio nuovoannuncio = new Annuncio (descrizione, now);
-		boolean flag=true;
-		do {
-			System.out.println("Vuoi aggiungere un'asta al rialzo [R] o un acquisto diretto[D]?");
-			try {
-				char scelta=input.next().charAt(0);
-				if (scelta=='R'||scelta=='r') {
-					//boolean per controllare che l'utente inserisca la lettera giusta
-					flag=false;
-					//fino a che l'utente non inserisce il prezzo, l'oggetto viene memorizzato con prezzo=0.0
-					double prezzoiniziale=0.0;
-					//richiamo il metodo per chiedere il prezzo
-					prezzoiniziale=chiediprezzo();
-					// mi serve per mangiarmi lo spazio successivo
-					//altrimenti input.nextLine() successivo mi mangia lo spazio e viene skippato
-					input.nextLine();
-			
-					//richiamo il metodo per chiedere la data
-					Date datagiusta=chiedidata();
-			
-					System.out.println("Inserisci il nome dell'ultimo offerente:");
-					String ultimoofferente= input.nextLine();
-					input.nextLine();
-					nuovoannuncio= new AstaRialzo(descrizione, now, prezzoiniziale, datagiusta, ultimoofferente);
-					// aggiungo il nuovo oggetto creato al vettore
-					v.add(nuovoannuncio);
-					modifica=true; // modifica non salvata
-					System.out.println("Hai creato un nuovo annuncio!");
-					System.out.println("");
-					}
-				//gestisco la scelta dell'utente di inserire un annuncio di AcquistoDiretto
-				else if (scelta=='D'||scelta=='d') {
-			
-					flag=false;
-					System.out.println("Inserisci un prezzo:");
-					double prezzo=0.0;
-					//metodo per chiedere il prezzo
-					prezzo=chiediprezzo();
-
-					System.out.println("Inserisci il tempo di consegna (numero di giorni): ");
-					boolean verifica=true;
-						do {
-							try {
-								int tempiconsegna=input.nextInt();
-								nuovoannuncio= new AcquistoDiretto (descrizione, now, prezzo, tempiconsegna);
-								v.add(nuovoannuncio);
-								modifica=true; // modifica non salvata
-								verifica=false;
-								System.out.println("Hai creato un nuovo annuncio!");
-								System.out.println("");
-							}catch(InputMismatchException e) {
-								input.next();
-								System.out.println("Hai inserito un carattere non valido.");
-								System.out.println("Riprova!");
-							}
-						}while(verifica);
+}
+	//metodo per aggiungere aste al rialzo
+	public void aggiungiasta(Annuncio nuovoannuncio, String descrizione) {
+				//richiamo il metodo per chiedere il prezzo
+				double prezzoiniziale=chiediprezzo();
+				
+				// mi serve per mangiarmi lo spazio successivo
+				//altrimenti input.nextLine() successivo mi mangia lo spazio e viene skippato
+				input.nextLine();
+				Date datagiusta=null;
+				boolean controllo=true;
+				do {
+				try {
+				//richiamo il metodo per chiedere la data
+				datagiusta=chiedidata();
+				if(!controllodatascadenza(datagiusta, now))
+					throw new EccezioneData("Data invalida: La data di scadenza deve essere posteriore a quella attuale.");
+				else controllo=false;
+				}catch (EccezioneData e) {
+					System.out.println(e.getMessage());
+					System.out.println("Inserisci una data corretta.");
 				}
-		else {
-			//si è deciso in estendere la classe eccezione per migliorare la lettura del codice
-			throw new EccezioneDigitazione("Errore nell'inserimento.");
-		}
-		}catch (EccezioneDigitazione e) {
-			System.out.println(e.getMessage());
-			System.out.println("Riprova!");
-		}
-		}while(flag);
+				}while(controllo);
+		
+				System.out.println("Inserisci il nome dell'ultimo offerente:");
+				String ultimoofferente= input.nextLine();
+				nuovoannuncio= new AstaRialzo(descrizione, now, prezzoiniziale, datagiusta, ultimoofferente);
+				// aggiungo il nuovo oggetto creato al vettore
+				v.add(nuovoannuncio);
+				modifica=true; // modifica non salvata
+				System.out.println("Hai creato un nuovo annuncio!");
+				System.out.println("");
 	}
-//metodo che mi chiede il prezzo sia per acquisto diretto che per asta al rialzo e per gestire l'eccezione sotto descritta	
+	
+	//metodo per aggiungere acquisti diretti
+	public void aggiungidiretto(Annuncio nuovoannuncio, String descrizione) {
+				//metodo per chiedere il prezzo
+				double prezzo=chiediprezzo();
+				System.out.println("Inserisci il tempo di consegna (numero di giorni): ");
+				boolean verifica=true;
+					do {
+						try {
+							int tempiconsegna=input.nextInt();
+							nuovoannuncio= new AcquistoDiretto (descrizione, now, prezzo, tempiconsegna);
+							v.add(nuovoannuncio);
+							modifica=true; // modifica non salvata
+							verifica=false;
+							System.out.println("Hai creato un nuovo annuncio!");
+							System.out.println("");
+						}catch(InputMismatchException e) {
+							input.next();
+							System.out.println("Hai inserito un carattere non valido.");
+							System.out.println("Riprova!");
+						}
+					}while(verifica);
+		}
+	
+	//metodo che mi chiede il prezzo sia per acquisto diretto
+	//che per asta al rialzo e per gestire l'eccezione sotto descritta
 	public double chiediprezzo() {
 		boolean control=true;
+		//imposto inizialmente il prezzo a 0.0
 		double prezzoiniziale=0.0;
 		//gestisco l'eccezione dell'inserimento di un prezzo decimale
 			do {
@@ -122,6 +111,7 @@ public class GestioneVendite {
 			}while (control);
 		return prezzoiniziale;
 	}
+	
 //metodo per chiedere la data	
 	public Date chiedidata() {
 		boolean controllo=true;
@@ -134,10 +124,11 @@ public class GestioneVendite {
 			try {
 				System.out.println("Inserisci una data di scadenza in formato dd-MM-yyyy: ");
 				//String datascadenza=new String();
-				String datascadenza=input.next();
+				String datascadenza=input.nextLine();
 				
 				//controllo per non lanciare un'eccezione nel caso in cui la data fosse ben formattata
 				//ma per errore dovesse iniziare con uno spazio
+				//se la data inizia per spazio, lo spazio viene automaticamente eliminato
 				while (datascadenza.charAt(0)==' ') {
 					datascadenza=datascadenza.substring(1,datascadenza.length());
 				}
@@ -151,28 +142,21 @@ public class GestioneVendite {
 				int mese=Integer.parseInt(arraydata[1]);
 				int anno=Integer.parseInt(arraydata[2]);
 				
-				boolean giornigiusti=controllogiorni(giorno, mese, anno);
-	
 				// controlla la correttezza del numero di giorni del mese (ritorna valore booleano)
-				
-				
+				boolean giornigiusti=controllogiorni(giorno, mese, anno);
+				// controlla la correttezza del numero di mesi inseriti
 				if((mese < 1 || mese > 12) || !giornigiusti)
 					throw new EccezioneData("Numero di gioni o mesi non valido!");
 				else {
 					SimpleDateFormat newformat = new SimpleDateFormat ("dd-MM-yyyy");
 					datagiusta=newformat.parse(datascadenza);
-					
-					boolean datadopo=controllodatascadenza(datagiusta, datascadenza, now);
-					if(!datadopo)
-						throw new EccezioneData("Data invalida: La data di scadenza deve essere posteriore a quella attuale.");
-					else controllo=false;
+					controllo=false;
 				}
 
 			} catch (EccezioneData e) {
 					System.out.println(e.getMessage());
 					System.out.println("Inserire nuovamente la data");
 			} catch (Exception e) {
-					input.next();
 					System.out.println("Impossibile ricavare una data valida dal formato inserito.");
 					System.out.println("Inserisci una data di scadenza in un formato valido (es.: 02-05-2020)");
 				}
@@ -211,8 +195,7 @@ public class GestioneVendite {
 			System.out.println();
 			}
 	}
-	
- 
+
 	public void visualizzaDiretti() {
 		boolean vuotoD=true;
 		System.out.println("");
@@ -230,22 +213,22 @@ public class GestioneVendite {
 	}
 	
 	public void visualizzaAfter() {
-		String text="";
-		String text2="";
 		boolean vuoti=true;
-		System.out.println("");
-		System.out.println("Inserisci una data di scadenza in formato dd-MM-yyyy: ");
+
 		//richaimo il metodo per chiedere la data descritto sopra
+		
 		Date datagiusta=chiedidata();
-	System.out.println("Ecco gi annunci dopo "+ text+text2+":");
-	for (Annuncio x:v) 
-		if (x.getdata().after(datagiusta)) {
-			System.out.println(x);
-			System.out.println("");
-			vuoti=false;
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");  
+		String dataformat= formatter.format(datagiusta);
+		System.out.println("Ecco gi annunci dopo il "+ dataformat+":");
+		for (Annuncio x:v) 
+			if (x.getdata().after(datagiusta)) {
+				System.out.println(x);
+				System.out.println("");
+				vuoti=false;
 		}
 		if(vuoti)
-			System.out.println("Non ci sono aste al rialzo dopo "+ text+text2);
+			System.out.println("Non ci sono aste al rialzo dopo il "+ dataformat);
 			System.out.println();
 	}
 
@@ -313,7 +296,6 @@ public class GestioneVendite {
 					v.remove(posizioni[elenco]);
 				}
 					}catch (ErroreIndice e) {
-						input.next();
 						System.out.print(e.getMessage());
 						System.out.println("Digita il numero dell'annuncio che vuoi eliminare: ");
 					}
@@ -330,7 +312,7 @@ public class GestioneVendite {
 	}
 	
 	//metodo per l'eliminazione di un annuncio Asta al Rialzo
-	public void rimuoviannuncio() {
+	public void rimuoviasta() {
 		//variabile utile a capire se il vettore è vuoto
 		boolean empty=true;
 		System.out.println("");
@@ -486,6 +468,9 @@ public class GestioneVendite {
 		}
 		
 		// metodo statico che mi ritorna true se i giorni del mese sono stati inseriti correttamente
+		//come regola generale si è deciso di utilizzare metodi statici nel caso in cui si siano creati dei metodi
+		//il cui utilizzo era svincolato dalla creazione di un oggetto
+		//che quindi avessero senso anche da soli
 		public static boolean controllogiorni(int giorno, int mese, int anno) {
 			
 			boolean giusto=true;
@@ -499,16 +484,17 @@ public class GestioneVendite {
 					 if(giorno>28) giusto=false;
 				}
 				break;
-			 	default: if(giorno>31) giusto=false; break;
+
+			 default : if(giorno>31) giusto=false; break;
 				}
 			return giusto;
 		}
 	
 		//metodo statico per verificare la correttezza della data di scadenza
-		public static boolean controllodatascadenza(Date datagiusta, String datascadenza, Date now){
+		public static boolean controllodatascadenza(Date datagiusta, Date now){
 			boolean corret=true;
 			if(now.after(datagiusta))
 				corret=false;
 		return corret;
-	}
+		}
 	}
