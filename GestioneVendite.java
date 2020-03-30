@@ -11,9 +11,13 @@ public class GestioneVendite {
 	
 	Scanner input = new Scanner (System.in);
 	private Vector <Annuncio> v  = new Vector <Annuncio>();
-	private Date now = new Date();
 	
-	public GestioneVendite () {
+	//Creo l'oggetto data now, con valore di data odierna come variabile statica
+	//in modo da essere costante per tutti i metodi della classe
+	private static Date now = new Date();
+	
+	public GestioneVendite (Vector <Annuncio> v) {
+		this.v=v;
 		try {
 		ObjectInputStream file_input = new ObjectInputStream(new BufferedInputStream(new FileInputStream("Annuncio.dat")));
 		// legge l'intero vettore da file
@@ -48,7 +52,7 @@ public class GestioneVendite {
 				try {
 				//richiamo il metodo per chiedere la data
 				datagiusta=chiedidata();
-				if(!controllodatascadenza(datagiusta, now))
+				if(!controllodatascadenza(datagiusta))
 					throw new EccezioneData("Data invalida: La data di scadenza deve essere posteriore a quella attuale.");
 				else controllo=false;
 				}catch (EccezioneData e) {
@@ -89,28 +93,6 @@ public class GestioneVendite {
 						}
 					}while(verifica);
 		}
-	
-	//metodo che mi chiede il prezzo sia per acquisto diretto
-	//che per asta al rialzo e per gestire l'eccezione sotto descritta
-	public double chiediprezzo() {
-		boolean control=true;
-		//imposto inizialmente il prezzo a 0.0
-		double prezzoiniziale=0.0;
-		//gestisco l'eccezione dell'inserimento di un prezzo decimale
-			do {
-				try {
-					System.out.println("Inserisci un prezzo:");
-					prezzoiniziale=input.nextDouble();
-					control=false;
-				}catch (InputMismatchException e) {
-					input.next();
-					System.out.println("Formato non valido.");
-					System.out.println("Inserisci un nuovo prezzo.");
-					System.out.println("Usare la virgola per dividere le unità dai decimali.");
-				}
-			}while (control);
-		return prezzoiniziale;
-	}
 	
 //metodo per chiedere la data	
 	public Date chiedidata() {
@@ -444,6 +426,29 @@ public class GestioneVendite {
 			System.out.println();
 		}
 	}
+	
+	//metodo che mi chiede il prezzo sia per acquisto diretto
+	//che per asta al rialzo e per gestire l'eccezione sotto descritta
+	public double chiediprezzo() {
+		boolean control=true;
+		//imposto inizialmente il prezzo a 0.0
+		double prezzoiniziale=0.0;
+		//gestisco l'eccezione dell'inserimento di un prezzo decimale
+			do {
+				try {
+					System.out.println("Inserisci un prezzo:");
+					prezzoiniziale=input.nextDouble();
+					control=false;
+				}catch (InputMismatchException e) {
+					input.next();
+					System.out.println("Formato non valido.");
+					System.out.println("Inserisci un nuovo prezzo.");
+					System.out.println("Usare la virgola per dividere le unità dai decimali.");
+				}
+			}while (control);
+		return prezzoiniziale;
+	}
+	
 	// verifica se ci sono modifiche non salvate
 		public boolean daSalvare() {
 			return modifica;
@@ -491,7 +496,7 @@ public class GestioneVendite {
 		}
 	
 		//metodo statico per verificare la correttezza della data di scadenza
-		public static boolean controllodatascadenza(Date datagiusta, Date now){
+		public static boolean controllodatascadenza(Date datagiusta){
 			boolean corret=true;
 			if(now.after(datagiusta))
 				corret=false;
