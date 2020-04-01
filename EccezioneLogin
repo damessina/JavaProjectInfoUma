@@ -1,0 +1,12 @@
+package eccezioni;
+public class EccezioneLogin extends Exception {
+	
+	public EccezioneLogin(String s){
+		super(s);
+	}	
+	
+	public EccezioneLogin(){
+		super();
+	}
+
+}
