@@ -13,8 +13,8 @@ public class Menu {
 	private static Vector <Annuncio> elenco = new Vector <Annuncio>();
 	
 	//il costruttore di menu ha come parametro un vettore di utenti
-	public Menu(Vector <Utente> v) {
-	this.v=v;
+	public Menu(Vector <Utente> v2) {
+	this.v=v2;
 	input= new Scanner (System.in);
 	}
 
@@ -22,7 +22,6 @@ public class Menu {
 	public void login() {
 		boolean flag=true;
 		do {
-		
 		// chiede credenziali di accesso
 		System.out.print("username: ");
 		String username = input.nextLine();
@@ -37,7 +36,6 @@ public class Menu {
 			System.out.println("");
 			System.out.println("Login effettuato con successo!");
 			flag=false;
-			avviaMenu();
 			
 		} else throw new EccezioneLogin("Errore nel login!");
 		} catch (EccezioneLogin e) {
@@ -47,11 +45,11 @@ public class Menu {
 		}while(flag);
 	}
 					
-	private void avviaMenu() {	
+	public void avviaMenu() {	
 		
 	// crea una classe gestione vendite per richiamare metodi che lavorino sugli annunci
 	GestioneVendite ciccio = new GestioneVendite(elenco);
-	
+	input= new Scanner (System.in);
 	do {
 	System.out.println("Queste sono le operazioni disponibili: ");
 	System.out.println("");
@@ -151,6 +149,7 @@ public class Menu {
 	}
 	}while (controllo);
 	System.out.println("Grazie e Arrivederci.");
+	//input.close();
 	}
 	
 	//metodo che permette la creazione di un nuovo utente non registrato
@@ -183,7 +182,6 @@ public class Menu {
 		}
 		}while(controllo);
 		nuovo = new Utente (nome, user, pass1);
-		input.close();
 		return nuovo;
 	}
 
