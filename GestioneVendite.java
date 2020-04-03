@@ -394,7 +394,11 @@ public class GestioneVendite {
 			//imposto la nuova offerta.
 			else {
 			ripetiofferta=false; 
+			//imposto una nuova offerta nel vettore di annunci castato sulle Aste al rialzo
 			((AstaRialzo) v.get(posizioni[elenco])).nuovaofferta(nuovaofferta);
+			System.out.println("Inserisci il nome dell'ultimo offerente:");
+			String nuovoofferente=input.nextLine();
+			((AstaRialzo) v.get(posizioni[elenco])).setofferente(nuovoofferente);
 			System.out.println("Hai fatto una nuova offerta!");
 			System.out.println("");
 			}
