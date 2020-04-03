@@ -1,25 +1,80 @@
+import java.io.*;
 import java.util.*;
 import eccezioni.*;
 import annunci.*;
 
 public class Menu {
-	
+	//ponendo un vettore di Annunci come variabile di istanza, e non statica
+	//si lascia la libertà di creare più elenchi di Annunci (cosa che in questo caso non si farà perché non richiesto)
+	//ad esempio sarebbe possibile pensare un elenco di annunci per prodotti usati, e uno per prodotti nuovi
+	//concettualmente  si voleva lasciare la possibilità di formare liste di annunci con caratteristiche diverse
+	private Vector <Annuncio> elenco = new Vector <Annuncio>();
 	//pongo input come variabile di istanza per non doverla dichiarare ogni volta
 	Scanner input;
-	
-	boolean controllo= true;
-	private Vector <Utente> v;
-	
-	private static Vector <Annuncio> elenco = new Vector <Annuncio>();
-	
-	//il costruttore di menu ha come parametro un vettore di utenti
-	public Menu(Vector <Utente> v2) {
-	this.v=v2;
+
+	public Menu() {
 	input= new Scanner (System.in);
+	}
+	
+	public void ingresso(Vector <Utente> v) {
+
+		System.out.println("Accedi [A] o Registrati [R]");
+		char scelta=input.next().charAt(0);
+		input.nextLine();
+		try {
+		if (scelta=='A') {
+			System.out.println("- Accedi alle aste online -");
+			login(v);
+		}
+		else if(scelta=='R') {
+			Utente nuovo=null;
+			boolean uservalido=true;
+			do {
+			//blocco try-catch per convalidare l'utente
+			try {
+			//richiamo il metodo pubblico creutente() per l'instanziamento di un nuovo oggetto utente
+			nuovo=creautente();
+			
+			//effettuo gli opportuni controlli per vedere se il nuovo utente creato abbia uno user uguale ad uno già creato
+			
+			for(int i=0; i<v.size();i++) {
+				if(v.get(i).getusername()==nuovo.getusername())
+					throw new EccezioneUtente("Username non disponibile!");
+				else  uservalido = false;
+			}
+			}catch (EccezioneUtente e) {
+				System.out.println(e.getMessage());
+				System.out.println("Crea un utente con username valido!");
+			}
+			}while(uservalido);
+			v.add(nuovo);
+			//salva il vettore nel file
+			try {
+				ObjectOutputStream files_output = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("Utente.dat")));
+				// salva l'ultimo oggetto creato nel vettore nel file
+				files_output.writeObject(v);
+				files_output.close();
+			} catch (IOException e) {
+				System.out.println("ERRORE di I/O");
+				System.out.println(e);
+			}		
+			System.out.println("Registrazione eseguita con successo!");
+		}
+		else throw new EccezioneDigitazione ("Errore nella digitazione delle opzioni.");
+		}catch(EccezioneDigitazione e) {
+			System.out.println(e.getMessage());
+			System.out.println("Inserisci un carattere valido");
+		}
 	}
 
 	//metodo che consente di accedere e usare il menù
-	public void login() {
+	private void login(Vector <Utente> v) {
+		if (v.isEmpty()) System.out.println("Vuoto");
+		else {
+		for (Utente x: v) {
+			System.out.println(x);
+		}
+		}
 		boolean flag=true;
 		do {
 		// chiede credenziali di accesso
@@ -30,14 +85,15 @@ public class Menu {
 		try {
 			
 		// se le credenziali sono corrette, avvia il menù con le operazioni
-		//la verifica avviene attraverso il metodo statico loginOK
+		//la verifica avviene attraverso il metodo loginOK (che ritorna un valore booleano)
 		if (loginOK(username, password, v)) {
 			// saluta l'utente
 			System.out.println("");
 			System.out.println("Login effettuato con successo!");
+			avviaMenu(elenco);
 			flag=false;
-			
-		} else throw new EccezioneLogin("Errore nel login!");
+		}
+		else throw new EccezioneLogin("Errore nel login!");
 		} catch (EccezioneLogin e) {
 			System.out.println(e.getMessage());
 			System.out.println("Inserire nuovamente le credenziali.");
@@ -45,11 +101,12 @@ public class Menu {
 		}while(flag);
 	}
 					
-	public void avviaMenu() {	
+	private void avviaMenu(Vector <Annuncio> v) {	
 		
-	// crea una classe gestione vendite per richiamare metodi che lavorino sugli annunci
-	GestioneVendite ciccio = new GestioneVendite(elenco);
+	// istanzio un oggettto della classe GestioneVendite per richiamare metodi che lavorino sugli annunci
+	GestioneVendite ciccio = new GestioneVendite(v);
 	input= new Scanner (System.in);
+	boolean controllo=true;
 	do {
 	System.out.println("Queste sono le operazioni disponibili: ");
 	System.out.println("");
@@ -62,7 +119,8 @@ public class Menu {
 	System.out.println("7- Rimuovi annuncio di asta al rialzo scaduta. ");
 	System.out.println("8- Fai una nuova offerta per l'asta al rialzo. ");
 	System.out.println("9- Esegui un acquisto diretto. ");
-	System.out.println("10- Termina le operazioni.");
+	System.out.println("10 - Esegui Logout. ");
+	System.out.println("11- Termina le operazioni.");
 	System.out.println("");
 	try {
 	int opzione= input.nextInt();
@@ -115,7 +173,7 @@ public class Menu {
 				ciccio.nuovaofferta(); break;
 		case 9: System.out.println("- Esegui un acquisto diretto -");
 				ciccio.rimuovidiretto(); break;
-		case 10: System.out.println("- Termina le operazioni -"); //qua forse conviene fare un metodo in GestioneVendite
+		case 11: System.out.println("- Termina le operazioni -"); //qua forse conviene fare un metodo in GestioneVendite
 				controllo=false; 
 				if (ciccio.daSalvare()) {
 					//inizializzo la variabile risposta a 0 di default
@@ -151,12 +209,13 @@ public class Menu {
 	System.out.println("Grazie e Arrivederci.");
 	//input.close();
 	}
-	
+
 	//metodo che permette la creazione di un nuovo utente non registrato
 	public Utente creautente() {
 		input= new Scanner (System.in);
 		Utente nuovo;
-		System.out.println("Registrazione:");
+		System.out.println("- Registrazione -");
+		System.out.println("");
 		System.out.println("Inserisci nome:");
 		String nome = input.nextLine();
 		System.out.println("Inserisci username: ");
@@ -172,7 +231,7 @@ public class Menu {
 		pass2=input.nextLine();
 		boolean ok= pass1.equals(pass2);
 		if(ok) {
-			System.out.println("Password inserita correttamente!");
+			System.out.println("Ottimo! Le due password corrispondono.");
 			controllo=false;
 		}
 		else throw new EccezioneDigitazione("Le due password non sono corrispondenti!");
@@ -182,16 +241,22 @@ public class Menu {
 		}
 		}while(controllo);
 		nuovo = new Utente (nome, user, pass1);
+		
+		//avvio il menu cos' che l'utente appena registrato non debba rifare il login dopo il primo accesso
+		//in questo modo l'utente registrato verrà effettivamente creato solo al termine di una sessione
+		avviaMenu(elenco);
 		return nuovo;
+
 	}
 
 	//verifica le credenziali inserite (cerca tra gli utenti)
 	// invocando il metodo opportuno della classe Utente
-		private static boolean loginOK(String usr, String pass, Vector <Utente> v) {
+		private boolean loginOK(String usr, String pass, Vector <Utente> vec) {
+		
 		int i = 0; 
 		boolean loginOK=false;
-		while (i<v.size() && !loginOK) {
-			loginOK = v.get(i).controlla(usr, pass);
+		while (i<vec.size() && !loginOK) {
+			loginOK = vec.get(i).controlla(usr, pass);
 			if (!loginOK) i++;
 		}
 		return loginOK;
