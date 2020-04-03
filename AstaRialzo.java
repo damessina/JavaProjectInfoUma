@@ -44,6 +44,10 @@ public class AstaRialzo extends Annuncio{
 	public String getultimoofferente() {
 		return ultimoofferente;
 	}
+	//imposto il metodo setter per impostare un nuovo offerente
+	public void setofferente(String offerente) {
+		ultimoofferente=offerente;
+	}
 	//imposto il metodo setter per fare una nuova offerta
 	public void nuovaofferta(double nuovaofferta) {
 		importoultimaofferta=nuovaofferta;
