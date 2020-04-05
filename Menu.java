@@ -18,17 +18,21 @@ public class Menu {
 	
 	public void ingresso(Vector <Utente> v) {
 
+		boolean controllo=true;
+		do {
 		System.out.println("Accedi [A] o Registrati [R]");
 		char scelta=input.next().charAt(0);
 		input.nextLine();
 		try {
-		if (scelta=='A') {
+		if (scelta=='A'||scelta=='a') {
 			System.out.println("- Accedi alle aste online -");
 			login(v);
+			controllo=false;
 		}
-		else if(scelta=='R') {
+		else if(scelta=='R'||scelta=='r') {
 			Utente nuovo=null;
 			boolean uservalido=true;
+			controllo=false;
 			do {
 			//blocco try-catch per convalidare l'utente
 			try {
@@ -69,6 +73,7 @@ public class Menu {
 			System.out.println(e.getMessage());
 			System.out.println("Inserisci un carattere valido");
 		}
+		}while(controllo);
 	}
 
 	//metodo che consente di accedere e usare il menù
@@ -123,8 +128,7 @@ public class Menu {
 	System.out.println("7- Rimuovi annuncio di asta al rialzo scaduta. ");
 	System.out.println("8- Fai una nuova offerta per l'asta al rialzo. ");
 	System.out.println("9- Esegui un acquisto diretto. ");
-	System.out.println("10 - Esegui Logout. ");
-	System.out.println("11- Termina le operazioni.");
+	System.out.println("10- Termina le operazioni.");
 	System.out.println("");
 	try {
 	int opzione= input.nextInt();
@@ -177,7 +181,7 @@ public class Menu {
 				ciccio.nuovaofferta(); break;
 		case 9: System.out.println("- Esegui un acquisto diretto -");
 				ciccio.rimuovidiretto(); break;
-		case 11: System.out.println("- Termina le operazioni -"); //qua forse conviene fare un metodo in GestioneVendite
+		case 10: System.out.println("- Termina le operazioni -"); //qua forse conviene fare un metodo in GestioneVendite
 				controllo=false; 
 				if (ciccio.daSalvare()) {
 					//inizializzo la variabile risposta a 0 di default
@@ -186,21 +190,21 @@ public class Menu {
 						try {
 						System.out.println("Vuoi salvare le modifiche effettuate (S/N)?");
 						risposta = input.nextLine().charAt(0);
-						if (risposta=='S') { 
+						if (risposta=='S'||risposta=='s') { 
 							boolean tuttoOk = ciccio.salva();
 							if (tuttoOk) 
 								System.out.println("Dati Salvati.");
 							else
 								System.out.println("Problema durante il salvataggio.");
 							}
-						else if(risposta=='N') System.out.println("I dati non sono stati salvati.");
+						else if(risposta=='N'||risposta=='n') System.out.println("I dati non sono stati salvati.");
 						else throw new EccezioneDigitazione ("Valore inserito non valido");
 						
 						}catch (EccezioneDigitazione e) {
 							System.out.println(e.getMessage());
 							System.out.println("Inserisci un carattere [S] o [N]");
 						}
-					} while (risposta!='S' && risposta!='N');
+					} while (risposta!='S' && risposta=='s'&&risposta!='N'&&risposta=='n');
 				}
 				break;
 		default : System.out.println("Errore nell'inserimento");
